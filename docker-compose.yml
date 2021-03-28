@@ -1,0 +1,29 @@
+version: "3.7"
+services:
+  api_service:
+    build: .
+    restart: always
+    ports:
+      - 8080:8080
+    environment:
+        SPRING_DATASOURCE_URL: jdbc:mysql://app_db:3306/flop?autoReconnect=true&failOverReadOnly=false&maxReconnects=10
+        SPRING_DATASOURCE_USERNAME: flop
+        SPRING_DATASOURCE_PASSWORD: flipFlop
+    depends_on:
+      - mysql_db
+    links:
+      - mysql_db:app_db
+  mysql_db:
+    image: "mysql:8.0"
+    restart: always
+    cap_add:
+      - SYS_NICE
+    ports:
+      - 3306:3306
+    volumes:
+      - ./docker-volumes-data/mysql_db:/var/lib/database
+    environment:
+      MYSQL_DATABASE: flop
+      MYSQL_USER: flop
+      MYSQL_PASSWORD: flipFlop
+      MYSQL_ROOT_PASSWORD: flipFlopRoot
