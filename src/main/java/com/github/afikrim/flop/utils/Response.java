@@ -1,21 +1,23 @@
 package com.github.afikrim.flop.utils;
 
-public class Response<T> {
+import org.springframework.hateoas.RepresentationModel;
 
-    private Boolean status = true;
+public class Response<T> extends RepresentationModel<Response<T>> {
+
+    private Boolean success = true;
     private ResponseCode responseCode = ResponseCode.HTTP_OK;
     private String message;
     private T data;
 
-    public Response(Boolean status, ResponseCode responseCode, String message, T data) {
-        this.status = status;
+    public Response(Boolean success, ResponseCode responseCode, String message, T data) {
+        this.success = success;
         this.responseCode = responseCode;
         this.message = message;
         this.data = data;
     }
 
-    public Boolean getStatus() {
-        return status;
+    public Boolean getSuccess() {
+        return success;
     }
 
     public ResponseCode getResponseCode() {
