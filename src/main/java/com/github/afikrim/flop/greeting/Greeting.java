@@ -2,7 +2,9 @@ package com.github.afikrim.flop.greeting;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Greeting {
+import org.springframework.hateoas.RepresentationModel;
+
+public class Greeting extends RepresentationModel<Greeting> {
 
     @JsonProperty("name")
     private final String appName;
