@@ -1,6 +1,7 @@
 package com.github.afikrim.flop.users;
 
-import java.sql.Date;
+import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,8 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.afikrim.flop.accounts.Account;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -23,10 +24,12 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = { "email", "phone" }))
+@Table(name = "users")
 @AllArgsConstructor
 @NoArgsConstructor
-public class User extends RepresentationModel<User> {
+public class User extends RepresentationModel<User> implements Serializable {
+
+    private static final long serialVersionUID = -7963882991392335127L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +45,7 @@ public class User extends RepresentationModel<User> {
     @Column(name = "phone", unique = true)
     private String phone;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id")
     private Account account;
 
@@ -90,12 +93,22 @@ public class User extends RepresentationModel<User> {
         this.account = account;
     }
 
+    @JsonProperty("created_at")
     public Date getCreatedAt() {
         return createdAt;
     }
 
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @JsonProperty("updated_at")
     public Date getUpdatedAt() {
         return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
 }

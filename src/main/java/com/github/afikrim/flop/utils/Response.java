@@ -1,13 +1,21 @@
 package com.github.afikrim.flop.utils;
 
+import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.springframework.hateoas.RepresentationModel;
 
-public class Response<T> extends RepresentationModel<Response<T>> {
+public class Response<T> extends RepresentationModel<Response<T>> implements Serializable {
+
+    private static final long serialVersionUID = 3943340579706180715L;
 
     private Boolean success = true;
     private ResponseCode responseCode = ResponseCode.HTTP_OK;
     private String message;
     private T data;
+
+    public Response() {}
 
     public Response(Boolean success, ResponseCode responseCode, String message, T data) {
         this.success = success;
@@ -20,16 +28,33 @@ public class Response<T> extends RepresentationModel<Response<T>> {
         return success;
     }
 
+    public void setSuccess(Boolean success) {
+        this.success = success;
+    }
+
+    @JsonProperty("code")
     public ResponseCode getResponseCode() {
         return responseCode;
+    }
+
+    public void setResponseCode(ResponseCode responseCode) {
+        this.responseCode = responseCode;
     }
 
     public T getData() {
         return data;
     }
 
+    public void setData(T data) {
+        this.data = data;
+    }
+
     public String getMessage() {
         return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
 }
