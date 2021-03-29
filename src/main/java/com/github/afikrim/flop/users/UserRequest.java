@@ -1,5 +1,7 @@
 package com.github.afikrim.flop.users;
 
+import java.util.Optional;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.github.afikrim.flop.accounts.AccountRequest;
 
@@ -18,7 +20,7 @@ public class UserRequest {
     private String phone;
 
     @JsonProperty("account")
-    private AccountRequest account;
+    private Optional<AccountRequest> account;
 
     public String getFullname() {
         return fullname;
@@ -32,7 +34,7 @@ public class UserRequest {
         return phone;
     }
 
-    public AccountRequest getAccount() {
+    public Optional<AccountRequest> getAccount() {
         return account;
     }
 

@@ -1,5 +1,8 @@
 package com.github.afikrim.flop.users;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
 
 import com.github.afikrim.flop.utils.Response;
@@ -7,7 +10,6 @@ import com.github.afikrim.flop.utils.ResponseCode;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +34,7 @@ public class UserController {
         List<User> users = userService.getAll();
         Response<?> response = new Response<>(true, ResponseCode.HTTP_OK, "Successfully retrieved all users", users);
 
-        UserRequest userRequest = new UserRequest();
-        Link store = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).store(userRequest))
-                .withRel("store");
+        Link store = linkTo(methodOn(this.getClass()).store(null)).withRel("store");
 
         response.add(store);
 
@@ -46,6 +46,10 @@ public class UserController {
         User user = userService.store(userRequest);
         Response<?> response = new Response<>(true, ResponseCode.CREATED, "Successfully store new user", user);
 
+        Link all = linkTo(methodOn(this.getClass()).index()).withRel("all");
+
+        response.add(all);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -55,23 +59,41 @@ public class UserController {
         Response<?> response = new Response<>(true, ResponseCode.HTTP_OK, "Successfully retrieved user with id " + id,
                 user);
 
+        Link all = linkTo(methodOn(this.getClass()).index()).withRel("all");
+        Link store = linkTo(methodOn(this.getClass()).store(null)).withRel("store");
+
+        response.add(all);
+        response.add(store);
+
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UserRequest userRequest) {
         User user = userService.updateOne(id, userRequest);
-        Response<?> response = new Response<>(true, ResponseCode.CREATED, "Successfully store new user", user);
+        Response<?> response = new Response<>(true, ResponseCode.HTTP_OK, "Successfully update user with id " + id, user);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        Link all = linkTo(methodOn(this.getClass()).index()).withRel("all");
+        Link store = linkTo(methodOn(this.getClass()).store(null)).withRel("store");
+
+        response.add(all);
+        response.add(store);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> destroy(@PathVariable Long id) {
         User user = userService.destroyOne(id);
-        Response<?> response = new Response<>(true, ResponseCode.CREATED, "Successfully destroy user", user);
+        Response<?> response = new Response<>(true, ResponseCode.HTTP_OK, "Successfully destroy user", user);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        Link all = linkTo(methodOn(this.getClass()).index()).withRel("all");
+        Link store = linkTo(methodOn(this.getClass()).store(null)).withRel("store");
+
+        response.add(all);
+        response.add(store);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }
