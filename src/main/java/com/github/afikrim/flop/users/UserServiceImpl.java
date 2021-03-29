@@ -31,10 +31,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAll() {
         return userRepository.findAll().stream().map(user -> {
-            UserRequest userRequest = new UserRequest();
-
             Link self = linkTo(methodOn(UserController.class).get(user.getId())).withRel("self");
-            Link update = linkTo(methodOn(UserController.class).update(user.getId(), userRequest)).withRel("update");
+            Link update = linkTo(methodOn(UserController.class).update(user.getId(), null)).withRel("update");
             Link delete = linkTo(methodOn(UserController.class).destroy(user.getId())).withRel("delete");
 
             user.add(self);
@@ -68,7 +66,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         Link self = linkTo(methodOn(UserController.class).get(user.getId())).withRel("self");
-        Link update = linkTo(methodOn(UserController.class).update(user.getId(), userRequest)).withRel("update");
+        Link update = linkTo(methodOn(UserController.class).update(user.getId(), null)).withRel("update");
         Link delete = linkTo(methodOn(UserController.class).destroy(user.getId())).withRel("delete");
 
         user.add(self);
@@ -87,9 +85,8 @@ public class UserServiceImpl implements UserService {
         }
 
         User tempUser = optionalUser.get();
-        UserRequest userRequest = new UserRequest();
 
-        Link update = linkTo(methodOn(UserController.class).update(id, userRequest)).withRel("update");
+        Link update = linkTo(methodOn(UserController.class).update(id, null)).withRel("update");
         Link delete = linkTo(methodOn(UserController.class).destroy(id)).withRel("delete");
 
         tempUser.add(update);

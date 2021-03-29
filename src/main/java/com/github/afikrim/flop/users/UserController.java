@@ -34,8 +34,7 @@ public class UserController {
         List<User> users = userService.getAll();
         Response<?> response = new Response<>(true, ResponseCode.HTTP_OK, "Successfully retrieved all users", users);
 
-        UserRequest userRequest = new UserRequest();
-        Link store = linkTo(methodOn(this.getClass()).store(userRequest)).withRel("store");
+        Link store = linkTo(methodOn(this.getClass()).store(null)).withRel("store");
 
         response.add(store);
 
@@ -60,9 +59,8 @@ public class UserController {
         Response<?> response = new Response<>(true, ResponseCode.HTTP_OK, "Successfully retrieved user with id " + id,
                 user);
 
-        UserRequest userRequest = new UserRequest();
         Link all = linkTo(methodOn(this.getClass()).index()).withRel("all");
-        Link store = linkTo(methodOn(this.getClass()).store(userRequest)).withRel("store");
+        Link store = linkTo(methodOn(this.getClass()).store(null)).withRel("store");
 
         response.add(all);
         response.add(store);
@@ -76,7 +74,7 @@ public class UserController {
         Response<?> response = new Response<>(true, ResponseCode.HTTP_OK, "Successfully update user with id " + id, user);
 
         Link all = linkTo(methodOn(this.getClass()).index()).withRel("all");
-        Link store = linkTo(methodOn(this.getClass()).store(userRequest)).withRel("store");
+        Link store = linkTo(methodOn(this.getClass()).store(null)).withRel("store");
 
         response.add(all);
         response.add(store);
@@ -89,9 +87,8 @@ public class UserController {
         User user = userService.destroyOne(id);
         Response<?> response = new Response<>(true, ResponseCode.HTTP_OK, "Successfully destroy user", user);
 
-        UserRequest userRequest = new UserRequest();
         Link all = linkTo(methodOn(this.getClass()).index()).withRel("all");
-        Link store = linkTo(methodOn(this.getClass()).store(userRequest)).withRel("store");
+        Link store = linkTo(methodOn(this.getClass()).store(null)).withRel("store");
 
         response.add(all);
         response.add(store);
