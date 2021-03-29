@@ -4,6 +4,7 @@ import javax.persistence.EntityNotFoundException;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,6 +71,21 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<Object> handleEntityNotFound(EntityNotFoundException ex) {
         Response<Object> response = new Response<>(false, ResponseCode.NOT_FOUND, ex.getMessage(), null);
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    /**
+     * Handles DataIntegrityViolationException. Create
+     * Handles DataIntegrityViolationException. Created to encapsulate errors with more
+     * detail than org.springframework.dao.DataIntegrityViolationException.
+     * 
+     * @param ex the DataIntegrityViolationException
+     * @return
+     */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    protected ResponseEntity<Object> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        Response<Object> response = new Response<>(false, ResponseCode.INTERNAL_SERVER_ERROR, ex.getMessage(), null);
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
