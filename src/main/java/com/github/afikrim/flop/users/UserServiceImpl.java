@@ -16,8 +16,10 @@ import com.github.afikrim.flop.accounts.AccountRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -46,8 +48,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User store(UserRequest userRequest) {
-        AccountRequest accountRequest = userRequest.getAccount();
+        Optional<AccountRequest> optionalAccountRequest = userRequest.getAccount();
 
+        if (!optionalAccountRequest.isPresent())
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing field account");
+
+        AccountRequest accountRequest = optionalAccountRequest.get();
         Account account = new Account();
         account.setUsername(accountRequest.getUsername());
         account.setPassword(accountRequest.getPassword());
@@ -98,7 +104,6 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User updateOne(Long id, UserRequest userRequest) {
-        AccountRequest accountRequest = userRequest.getAccount();
         Optional<User> optionalUser = userRepository.findById(id);
 
         if (!optionalUser.isPresent()) {
@@ -108,21 +113,27 @@ public class UserServiceImpl implements UserService {
         User tempUser = optionalUser.get();
         Account tempAccount = tempUser.getAccount();
 
+        Optional<AccountRequest> optionalAccount = userRequest.getAccount();
+
         if (userRequest.getFullname() != null)
             tempUser.setFullname(userRequest.getFullname());
         if (userRequest.getEmail() != null)
             tempUser.setEmail(userRequest.getEmail());
         if (userRequest.getPhone() != null)
             tempUser.setPhone(userRequest.getPhone());
-        if (accountRequest.getUsername() != null)
-            tempAccount.setUsername(accountRequest.getUsername());
-        if (accountRequest.getPassword() != null)
-            tempAccount.setPassword(accountRequest.getPassword());
+        if (optionalAccount.isPresent()) {
+            AccountRequest tempAccountRequest = optionalAccount.get();
 
-        tempAccount.setUpdatedAt(new Date());
+            if (tempAccountRequest.getUsername() != null)
+                tempAccount.setUsername(tempAccountRequest.getUsername());
+            if (tempAccountRequest.getPassword() != null)
+                tempAccount.setPassword(tempAccountRequest.getPassword());
+
+            tempAccount.setUpdatedAt(new Date());
+            tempUser.setAccount(tempAccount);
+        }
+
         tempUser.setUpdatedAt(new Date());
-
-        tempUser.setAccount(tempAccount);
 
         Link self = linkTo(methodOn(UserController.class).get(id)).withRel("self");
         Link delete = linkTo(methodOn(UserController.class).destroy(id)).withRel("delete");
